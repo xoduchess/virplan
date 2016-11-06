@@ -1,0 +1,87 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 6, 2016, 4:16:31 PM
+    Author     : XoDuchess
+*/
+
+/* Add media queries for smaller screens */
+@media screen and (max-width:720px) {
+    .Weekdays li, .Days li {width: 13.1%;}
+}
+
+@media screen and (max-width: 420px) {
+    .Weekdays li, .Days li {width: 12.5%;}
+    .Days li .active {padding: 2px;}
+}
+
+@media screen and (max-width: 290px) {
+    .Weekdays li, .Days li {width: 12.2%;}
+}
+
+
+* {box-sizing:border-box;}
+ul {list-style-type: none;}
+body {font-family: Verdana,sans-serif;}
+
+.CalendarMonth {
+    padding: 30px 25px;
+    width: 100%;
+    background: #f2bb07;
+}
+
+.CalendarMonth ul {
+    margin: 0;
+    padding: 0;
+}
+
+.CalendarMonth ul li {
+    color: black;
+    font-size: 30px;
+    text-transform: uppercase;
+    
+    letter-spacing: 3px;
+    
+}
+
+.Weekdays {
+    margin: 0;
+    padding: 10px 0;
+    background-color: #ddd;
+}
+
+.Weekdays li {
+    display: inline-block;
+    width: 13.6%;
+    color: #666;
+    text-align: center;
+    
+}
+
+.Days {
+    padding: 20px 20px;
+    background: #2efea;
+    margin: 0;
+}
+
+.Days li {
+    list-style-type: none;
+    display: inline-block;
+    width: 13.6%;
+    text-align: r;
+    margin-bottom: 16px;
+    font-size:12px;
+    //color: #777;
+    color: 494949;
+    border: 1px solid black;
+    
+}
+
+.Days li .active {
+    padding: 5px;
+    background: #f2bb07;
+    color: black !important
+}
