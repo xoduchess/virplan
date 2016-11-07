@@ -14,8 +14,33 @@ and open the template in the editor.
     <body>
         <div id='parent'>
     <!--Add Task area-->
+    <textarea>txt1</textarea>
+    <script type="text/javascript">
+        document.addEventListener("click", createTask); 
+            
+         function createTask(){ 
+             //create container
+             var c = document.getElementById("parent");
+             var taskbox = document.createElement("textarea"); 
+             
+             //taskbox.id = "MyTaskBox"; 
+             c.appendChild(taskbox);
+}
+       
+       // var taskbox = document.createElement('textarea');
+        //document.addEventListener("click", createTask); 
+            
+    
+        
+       /* function CreateTask(){ 
+            var taskbox = document.createElement('textarea'); 
+            document.getElementById('textarea').addEventListener('click');
+            taskbox.appendChild(taskbox);}*/
+        
+     </script>
 </div>
-        <button onClick="addBox()">Create Task</button> <br><br>
+        <button> Create Task </button>
+        <!--<button onClick="CreateTask()">Create Task</button> --><br><br>
  <!--Canvas Creation-->
         <div class="CalendarMonth"> 
   <ul>
@@ -76,15 +101,7 @@ and open the template in the editor.
         <!--<canvas id= "theCanvas" width="1000" height="1000"> </canvas> -->
        <!-- <script type="text/javascript" language="javascript">
    <!--<button> Create Task </button>
-   <!--script>
-       vsr
-   function create(button) {
-       .on('click', function())
-       var textBox = document.createElement("task")
-       TheCanvas.append(textBox); }
-    document.getElementById("TheCanvas").innerHTML=s;
-
-     </script>
+   
     <div id= "parent">  
     </div>-->
    
