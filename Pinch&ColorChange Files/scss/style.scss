@@ -1,0 +1,20 @@
+#stage {
+  background: #20bb5f;
+  border: 5px solid #009b2f;
+  width: 200px;
+
+  /*  */
+  text-align: start;
+
+  font: 30px;
+  position: relative;
+
+  /*  */
+  transform-origin: top left;
+}
+
+body {
+  margin: 0;
+  padding: 10px;
+  background: #333;
+}
