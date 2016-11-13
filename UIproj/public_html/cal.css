@@ -92,3 +92,14 @@ textarea {
 #container { width: 300px; height: 300px; }
 #container h3 { text-align: center; margin: 0; margin-bottom: 10px; }
 #resizable, #container { padding: 0.5em; }
+
+/* for class for copied object */
+.acquired-task
+{
+  
+  /* makes it 90% the width of the container */
+  width: 90%; 
+  /* helps center the box */
+  margin-left: 5%; 
+
+}

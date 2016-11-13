@@ -14,8 +14,53 @@ and open the template in the editor.
     <body>
         <!--<div id='parent'>-->
     <!--Add Task area-->
-    <textarea id="taskbox" draggable ="true" ondragstart="drag(event)" > What's your Task? </textarea> 
+    <textarea id="taskbox" draggable ="true" ondragstart="drag(event)" > What's your Task? </textarea>
+
+    <!--*taken from (pinch) html file-->
+    <script src="https://cdn.rawgit.com/hammerjs/touchemulator/master/touch-emulator.js"></script>
+    <script> TouchEmulator(); </script>
+    <script src="https://hammerjs.github.io/dist/hammer.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://cdn.rawgit.com/julianshapiro/velocity/master/velocity.min.js"></script>
+
+
     <script>
+
+
+       taskbox = document.getElementById("taskbox");
+       // *added from (pinch) index.js 
+       // get a reference to an element
+       $taskbox = jQuery(taskbox); //looks for the element with this id 
+
+       // *added from (pinch) index.js
+       // create a manager for that element
+       var manager = new Hammer.Manager(taskbox);
+
+       // *added from (pinch) index.js
+       // create recognizers
+       var Pan = new Hammer.Pan();
+
+       // add the recognizers
+       manager.add(Pan);
+
+      // *added from (pinch) index.js
+       var deltaX = 0;
+       var deltaY = 0;
+       manager.on('panmove', function(e) {
+       // do something cool
+       var dX = deltaX + (e.deltaX);
+       var dY = deltaY + (e.deltaY);
+       $.Velocity.hook($taskbox, 'translateX', dX + 'px');
+       $.Velocity.hook($taskbox, 'translateY', dY + 'px');
+      
+      });
+
+       manager.on('panend', function(e) {
+       deltaX = deltaX + e.deltaX;
+       deltaY = deltaY + e.deltaY;
+
+      });
+
         //Allow elemnts to be dropped
         function allowDrop(task){ 
             task.preventDefault();
@@ -26,7 +71,9 @@ and open the template in the editor.
         //What data should be dragged(Start dragging at taskbox)
         function drag(task){
 
-            task.dataTransfer.setData("text", task.target.id);
+            //*added class for dragging 
+            task.target.classList.add('dragging-task');
+            //task.dataTransfer.setData("text", task.target.id);
             //dataTransfer sets data type and value of task being dragged
 
             //*indicates that the object being dragged will be copied instead of moved 
@@ -36,12 +83,32 @@ and open the template in the editor.
         function drop(task){
             task.preventDefault(); 
             var taskdata = task.dataTransfer.getData("text"); 
-            task.target.appendChild(document.getElementById(taskdata));
+
+            //*added cloneNode to clone the box instead so the box could be copied 
+            //*created a new variable where the cloned node is placed
+            //var newTask = document.getElementById(taskdata).cloneNode();
+
+            //cloning the first element of those who have this class name ; cloning the object being dragged
+            var newTask = document.getElementsByClassName('dragging-task')[0].cloneNode();
+            //*dragging is no longer being done so we remove this element
+            newTask.classList.remove("dragging-task");
+
+            //*created new class so we can manipulate the copied object; instead of spaces you dash 
+            newTask.classList.add("acquired-task");
+            newTask.removeAttribute("id");
+            //(*)moves task into the calendar
+            task.target.appendChild(newTask);
             
-            //*indicates that the object that object that was copied should remain in place 
+            //*indicates that the object that object that was copied should remain in place
+
             task.dataTransfer.dropEffect = "copy"; 
           }
     
+
+
+
+
+
     </script>
     <!--<script type="text/javascript">
         document.addEventListener("click", createTask); 
