@@ -10,28 +10,26 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="cal.css">
-        <!--<script src="jquery-3.1.1.min.js"></script>
-        <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>-->
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     </head>
     <body>
-        <!--<div id="container" class="ui-widget-content">-->
-<span id="draggable">* 
-<input type="text" id="resizable" class="ui-state-active" value="This is input box">
-
-        <script type="text/javascript" language="javascript">
-     $(function() {
-     $( "#resizable" ).resizable({containment: "#container"});
-     $( "#draggable" ).draggable({containment: "#container"});
-});
-            </script> 
-          </span>
-<!--</div> -->  
-        <!--<div id='parent'>
-    <!--Add Task area
-    <textarea>txt1</textarea>
-    <script type="text/javascript">
+        <!--<div id='parent'>-->
+    <!--Add Task area-->
+    <textarea id="taskbox" draggable ="true" ondragstart="drag(event)" > What's your Task? </textarea> 
+    <script>
+        //Allow elemnts to be dropped
+        function allowDrop(task){ 
+            task.preventDefault();}
+        //What data should be dragged(Start dragging at taskbox)
+        function drag(task){ 
+            task.dataTransfer.setData("text", task.target.id);} //dataTransfer sets data type and value of task being dragged
+        //Repeat for Drop- Data can't be dropped in other elements(By Default)
+        function drop(task){
+            task.preventDefault(); 
+            var taskdata = task.dataTransfer.getData("text"); 
+            task.target.appendChild(document.getElementById(taskdata));}
+    
+    </script>
+    <!--<script type="text/javascript">
         document.addEventListener("click", createTask); 
             
          function createTask(){ 
@@ -57,7 +55,8 @@ and open the template in the editor.
 </div>
         <button> Create Task </button>
         <!--<button onClick="CreateTask()">Create Task</button> --><br><br>
- <!--Canvas Creation-->
+ <div id= "monthcdiv" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <!--Canvas Creation-->
         <div class="CalendarMonth"> 
   <ul>
     
@@ -114,6 +113,7 @@ and open the template in the editor.
   <li>29<br><br><br><br><br><br><br><br><br><br></li>
   <li>30<br><br><br><br><br><br><br><br><br><br></li>
 </ul>
+        </div>
         <!--<canvas id= "theCanvas" width="1000" height="1000"> </canvas> -->
        <!-- <script type="text/javascript" language="javascript">
    <!--<button> Create Task </button>
