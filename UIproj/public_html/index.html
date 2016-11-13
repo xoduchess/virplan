@@ -16,100 +16,131 @@ and open the template in the editor.
     <!--Add Task area-->
     <textarea id="taskbox" draggable ="true" ondragstart="drag(event)" > What's your Task? </textarea>
 
-    <!--*taken from (pinch) html file-->
+    <!--* added from Pinch&ColorSwitch branch (index.html)-->
     <script src="https://cdn.rawgit.com/hammerjs/touchemulator/master/touch-emulator.js"></script>
     <script> TouchEmulator(); </script>
     <script src="https://hammerjs.github.io/dist/hammer.js"></script>
     <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
     <script src="https://cdn.rawgit.com/julianshapiro/velocity/master/velocity.min.js"></script>
+    <!-- end -->
 
-
+    <!-- code for functionality -->
     <script>
 
-
+       //* create variable that gets an element by id 
        taskbox = document.getElementById("taskbox");
-       // *added from (pinch) index.js 
-       // get a reference to an element
-       $taskbox = jQuery(taskbox); //looks for the element with this id 
+       //looks for the element with this id 
+       $taskbox = jQuery(taskbox); //* *added from Pinch&ColorSwitch branch (index.js) 
 
-       // *added from (pinch) index.js
+      ///* added from Pinch&ColorSwitch branch (index.js)
        // create a manager for that element
        var manager = new Hammer.Manager(taskbox);
 
-       // *added from (pinch) index.js
-       // create recognizers
-       var Pan = new Hammer.Pan();
+       // create recognizer
+       var Pan = new Hammer.Pan(); 
 
-       // add the recognizers
+       // add the recognizer 
        manager.add(Pan);
 
-      // *added from (pinch) index.js
+      // axis
        var deltaX = 0;
        var deltaY = 0;
-       manager.on('panmove', function(e) {
-       // do something cool
-       var dX = deltaX + (e.deltaX);
-       var dY = deltaY + (e.deltaY);
-       $.Velocity.hook($taskbox, 'translateX', dX + 'px');
-       $.Velocity.hook($taskbox, 'translateY', dY + 'px');
-      
-      });
 
+       //** when starting to pan
+       manager.on('panstart',function(e){
+        //** add 'dragging-task' to the triggered element's class list
+          e.target.classList.add('dragging-task');
+            
+       })
+
+       //when panning (moving) element
+       manager.on('panmove', function(e) {
+        
+        var dX = deltaX + (e.deltaX);
+        var dY = deltaY + (e.deltaY);
+        $.Velocity.hook($taskbox, 'translateX', dX + 'px');
+        
+        //** selects element immediately below the cursor by raising textbox 30 px above it
+        $.Velocity.hook($taskbox, 'translateY', dY - 30 + 'px');
+      
+       });
+
+       //when panning ends
        manager.on('panend', function(e) {
        deltaX = deltaX + e.deltaX;
        deltaY = deltaY + e.deltaY;
+     //end of add from branch */
+
+
+       //** variable to get element right behind cursor //
+       selected = document.elementFromPoint(e.center.x, e.center.y); //should be one of the day blocks in the calendar
+       
+       //** add copy of the element to the calendar
+       var copied = e.target.cloneNode(); //puts copy of the element into variable
+       copied.classList.add('acquired-task'); //adds class to classList so copy has same width 
+
+       //** CSS transform property 
+       copied.style.transform = "none"; 
+       e.target.style.transform = "none";
+
+       //place element on the calendar
+       selected.appendChild(copied);
+       //resets axis' coordinates 
+       deltaX = 0; //start from zero again
+       deltaY = 0;
 
       });
 
-        //Allow elemnts to be dropped
+        //Allow elements to be dropped
         function allowDrop(task){ 
             task.preventDefault();
 
-            //*allows element to be copied before dragged
+            //** allows element to be copied before dragged
             task.effectAllowed =  "copyMove"; 
           }
-        //What data should be dragged(Start dragging at taskbox)
+
+        //What data should be dragged (Start dragging at taskbox)
         function drag(task){
 
-            //*added class for dragging 
+            //** added class for dragging  
             task.target.classList.add('dragging-task');
-            //task.dataTransfer.setData("text", task.target.id);
-            //dataTransfer sets data type and value of task being dragged
+              //task.dataTransfer.setData("text", task.target.id);
+              //dataTransfer sets data type and value of task being dragged
 
-            //*indicates that the object being dragged will be copied instead of moved 
+            //** copied object will be dragged instead of dragging the original 
             task.dataTransfer.dropEffect = "copy"; 
           }
+
         //Repeat for Drop- Data can't be dropped in other elements(By Default)
         function drop(task){
             task.preventDefault(); 
             var taskdata = task.dataTransfer.getData("text"); 
 
-            //*added cloneNode to clone the box instead so the box could be copied 
-            //*created a new variable where the cloned node is placed
-            //var newTask = document.getElementById(taskdata).cloneNode();
+              //*added cloneNode to clone the box instead so the box could be copied 
+              //*created a new variable where the cloned node is placed
+              //var newTask = document.getElementById(taskdata).cloneNode();
 
-            //cloning the first element of those who have this class name ; cloning the object being dragged
-            var newTask = document.getElementsByClassName('dragging-task')[0].cloneNode();
-            //*dragging is no longer being done so we remove this element
+
+            //** get the first element in the class list and clone it 
+            var newTask = document.getElementsByClassName('dragging-task')[0].cloneNode(); //clones the element being dragged
+            //** remove dragging from class list since it's no longer needed 
             newTask.classList.remove("dragging-task");
 
-            //*created new class so we can manipulate the copied object; instead of spaces you dash 
+            //** created new class so we can manipulate the copied object
             newTask.classList.add("acquired-task");
             newTask.removeAttribute("id");
-            //(*)moves task into the calendar
+
+            //** moves task into the calendar
             task.target.appendChild(newTask);
             
-            //*indicates that the object that object that was copied should remain in place
-
+            //** drops the copied element and keeps original in place
             task.dataTransfer.dropEffect = "copy"; 
+
           }
     
 
-
-
-
-
     </script>
+
     <!--<script type="text/javascript">
         document.addEventListener("click", createTask); 
             
@@ -133,6 +164,8 @@ and open the template in the editor.
             taskbox.appendChild(taskbox);}*/
         
      </script>
+
+
 </div>
         <button> Create Task </button>
         <!--<button onClick="CreateTask()">Create Task</button> --><br><br>
@@ -194,12 +227,13 @@ and open the template in the editor.
   <li>29<br><br><br><br><br><br><br><br><br><br></li>
   <li>30<br><br><br><br><br><br><br><br><br><br></li>
 </ul>
-        </div>
-        <!--<canvas id= "theCanvas" width="1000" height="1000"> </canvas> -->
-       <!-- <script type="text/javascript" language="javascript">
-   <!--<button> Create Task </button>
+    </div>
+        
+      <!--<canvas id= "theCanvas" width="1000" height="1000"> </canvas> -->
+      <!-- <script type="text/javascript" language="javascript">
+      <!--<button> Create Task </button>
    
-    <div id= "parent">  
+      <div id= "parent">  
     </div>-->
    
    
@@ -212,20 +246,23 @@ and open the template in the editor.
       context.lineTo(450, 50);
       context.stroke();
     </script>
+
     //Writing to Canvas
-        /*
-        var canvas = document.getElementById("theCanvas"); 
-        var ctx = canvas.getContext("2d"); 
-            ctx.moveTo(0,0); 
-            ctx.lineTo(100,100);  
-            ctx.stroke();
+      /*
+      var canvas = document.getElementById("theCanvas"); 
+      var ctx = canvas.getContext("2d"); 
+          ctx.moveTo(0,0); 
+          ctx.lineTo(100,100);  
+          ctx.stroke();
             
-        </script> 
-       <script type="text/javascript">
-  var cal = new Calendar();
-  cal.generateHTML();
-  document.write(cal.getHTML());*/
-</script>-->
+    </script> 
+      <script type="text/javascript">
+  
+      var cal = new Calendar();
+      cal.generateHTML();
+      document.write(cal.getHTML());*/
+
+    </script>-->
  
     </body>
 </html>
