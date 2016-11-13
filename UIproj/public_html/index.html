@@ -18,15 +18,29 @@ and open the template in the editor.
     <script>
         //Allow elemnts to be dropped
         function allowDrop(task){ 
-            task.preventDefault();}
+            task.preventDefault();
+
+            //*allows element to be copied before dragged
+            task.effectAllowed =  "copyMove"; 
+          }
         //What data should be dragged(Start dragging at taskbox)
-        function drag(task){ 
-            task.dataTransfer.setData("text", task.target.id);} //dataTransfer sets data type and value of task being dragged
+        function drag(task){
+
+            task.dataTransfer.setData("text", task.target.id);
+            //dataTransfer sets data type and value of task being dragged
+
+            //*indicates that the object being dragged will be copied instead of moved 
+            task.dataTransfer.dropEffect = "copy"; 
+          }
         //Repeat for Drop- Data can't be dropped in other elements(By Default)
         function drop(task){
             task.preventDefault(); 
             var taskdata = task.dataTransfer.getData("text"); 
-            task.target.appendChild(document.getElementById(taskdata));}
+            task.target.appendChild(document.getElementById(taskdata));
+            
+            //*indicates that the object that object that was copied should remain in place 
+            task.dataTransfer.dropEffect = "copy"; 
+          }
     
     </script>
     <!--<script type="text/javascript">
