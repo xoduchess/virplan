@@ -9,13 +9,142 @@ and open the template in the editor.
         <title>Virtual Planner</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="cal.css">
     </head>
     <body>
-        <!--Canvas Creation-->
-       <!--<div>Canvas Creation-->
-        <br> 
-        <br> 
-        <canvas id= "theCanvas" width="1000" height="1000"> </canvas> 
+        <!--<div id='parent'>-->
+    <!--Add Task area-->
+    <textarea id="taskbox" draggable ="true" ondragstart="drag(event)" > What's your Task? </textarea> 
+    <script>
+        //Allow elemnts to be dropped
+        function allowDrop(task){ 
+            task.preventDefault();}
+        //What data should be dragged(Start dragging at taskbox)
+        function drag(task){ 
+            task.dataTransfer.setData("text", task.target.id);} //dataTransfer sets data type and value of task being dragged
+        //Repeat for Drop- Data can't be dropped in other elements(By Default)
+        function drop(task){
+            task.preventDefault(); 
+            var taskdata = task.dataTransfer.getData("text"); 
+            task.target.appendChild(document.getElementById(taskdata));}
+    
+    </script>
+    <!--<script type="text/javascript">
+        document.addEventListener("click", createTask); 
+            
+         function createTask(){ 
+             //create container
+             var c = document.getElementById("parent");
+             var taskbox = document.createElement("textarea"); 
+             
+             //taskbox.id = "MyTaskBox"; 
+             c.appendChild(taskbox);
+}
+       
+       // var taskbox = document.createElement('textarea');
+        //document.addEventListener("click", createTask); 
+            
+    
         
+       /* function CreateTask(){ 
+            var taskbox = document.createElement('textarea'); 
+            document.getElementById('textarea').addEventListener('click');
+            taskbox.appendChild(taskbox);}*/
+        
+     </script>
+</div>
+        <button> Create Task </button>
+        <!--<button onClick="CreateTask()">Create Task</button> --><br><br>
+ <div id= "monthcdiv" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <!--Canvas Creation-->
+        <div class="CalendarMonth"> 
+  <ul>
+    
+    
+    <li>
+      ~ November 
+      <span style="font-size:30px"> 2016 ~</span>
+    </li>
+  </ul>
+</div>
+
+<ul class="Weekdays">
+  <li>Sunday</li>
+  <li>Monday</li>
+  <li>Tuesday</li>
+  <li>Wednesday</li>
+  <li>Thursday</li>
+  <li>Friday</li>
+  <li>Saturday</li>
+  
+</ul>
+
+<ul class="Days"> 
+    <li>30<br><br><br><br><br><br><br><br><br><br></li>
+    <li>31<br><br><br><br><br><br><br><br><br><br></li>
+  <li>1<br><br><br><br><br><br><br><br><br><br></li>
+  <li>2<br><br><br><br><br><br><br><br><br><br></li>
+  <li>3<br><br><br><br><br><br><br><br><br><br></li>
+  <li>4<br><br><br><br><br><br><br><br><br><br></li>
+  <li>5<br><br><br><br><br><br><br><br><br><br></li>
+  <li>6<br><br><br><br><br><br><br><br><br><br></li>
+  <li>7<br><br><br><br><br><br><br><br><br><br></li>
+  <li>8<br><br><br><br><br><br><br><br><br><br></li>
+  <li>9<br><br><br><br><br><br><br><br><br><br></li>
+  <li>10<br><br><br><br><br><br><br><br><br><br></li>
+  <li>11<br><br><br><br><br><br><br><br><br><br></li>
+  <li>12<br><br><br><br><br><br><br><br><br><br></li>
+  <li>13<br><br><br><br><br><br><br><br><br><br></li>
+  <li>14<br><br><br><br><br><br><br><br><br><br></li>
+  <li>15<br><br><br><br><br><br><br><br><br><br></li>
+  <li>16<br><br><br><br><br><br><br><br><br><br></li>
+  <li><br><br><br><br><br><br><br><br><br><span class="active">17</span></li>
+  <li>18<br><br><br><br><br><br><br><br><br><br></li>
+  <li>19<br><br><br><br><br><br><br><br><br><br></li>
+  <li>20<br><br><br><br><br><br><br><br><br><br></li>
+  <li>21<br><br><br><br><br><br><br><br><br><br></li>
+  <li>22<br><br><br><br><br><br><br><br><br><br></li>
+  <li>23<br><br><br><br><br><br><br><br><br><br></li>
+  <li>24<br><br><br><br><br><br><br><br><br><br></li>
+  <li>25<br><br><br><br><br><br><br><br><br><br></li>
+  <li>26<br><br><br><br><br><br><br><br><br><br></li>
+  <li>27<br><br><br><br><br><br><br><br><br><br></li>
+  <li>28<br><br><br><br><br><br><br><br><br><br></li>
+  <li>29<br><br><br><br><br><br><br><br><br><br></li>
+  <li>30<br><br><br><br><br><br><br><br><br><br></li>
+</ul>
+        </div>
+        <!--<canvas id= "theCanvas" width="1000" height="1000"> </canvas> -->
+       <!-- <script type="text/javascript" language="javascript">
+   <!--<button> Create Task </button>
+   
+    <div id= "parent">  
+    </div>-->
+   
+   
+    <!--<script>
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+
+      context.beginPath();
+      context.moveTo(100, 150);
+      context.lineTo(450, 50);
+      context.stroke();
+    </script>
+    //Writing to Canvas
+        /*
+        var canvas = document.getElementById("theCanvas"); 
+        var ctx = canvas.getContext("2d"); 
+            ctx.moveTo(0,0); 
+            ctx.lineTo(100,100);  
+            ctx.stroke();
+            
+        </script> 
+       <script type="text/javascript">
+  var cal = new Calendar();
+  cal.generateHTML();
+  document.write(cal.getHTML());*/
+</script>-->
+ 
     </body>
 </html>
