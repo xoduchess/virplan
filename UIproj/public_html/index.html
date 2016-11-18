@@ -34,27 +34,47 @@ and open the template in the editor.
 
       ///* added from Pinch&ColorSwitch branch (index.js)
        // create a manager for that element
-       var manager = new Hammer.Manager(taskbox);
+       var originalManager = new Hammer.Manager(taskbox);
 
-       // create recognizer
+       // create recognizers
        var Pan = new Hammer.Pan(); 
+       var Pinch = new Hammer.Pinch();
 
        // add the recognizer 
-       manager.add(Pan);
+       originalManager.add(Pan);
+       originalManager.add(Pinch);
 
+//EDIT
+       
+       // subscribe to events
+       var currentScale = 1;
+       function getRelativeScale(scale) {
+         return scale * currentScale;
+       }
+       originalManager.on('pinchmove', function(e) {
+          pinchAction(e);
+          
+        //  //$.Velocity.hook($stage, 'scale', scale);
+       });
+       originalManager.on('pinchend', function(e) {
+          // cache the scale
+          currentScale = getRelativeScale(e.scale);
+        });
+
+//EDIT
       // axis
        var deltaX = 0;
        var deltaY = 0;
 
        //** when starting to pan
-       manager.on('panstart',function(e){
+       originalManager.on('panstart',function(e){
         //** add 'dragging-task' to the triggered element's class list
           e.target.classList.add('dragging-task');
             
        })
 
        //when panning (moving) element
-       manager.on('panmove', function(e) {
+       originalManager.on('panmove', function(e) {
         
         var dX = deltaX + (e.deltaX);
         var dY = deltaY + (e.deltaY);
@@ -66,7 +86,7 @@ and open the template in the editor.
        });
 
        //when panning ends
-       manager.on('panend', function(e) {
+       originalManager.on('panend', function(e) {
        deltaX = deltaX + e.deltaX;
        deltaY = deltaY + e.deltaY;
      //end of add from branch */
@@ -77,6 +97,7 @@ and open the template in the editor.
        
        //** add copy of the element to the calendar
        var copied = e.target.cloneNode(); //puts copy of the element into variable
+       createHammerManager(copied);
        copied.classList.add('acquired-task'); //adds class to classList so copy has same width 
 
        //** CSS transform property 
@@ -90,6 +111,165 @@ and open the template in the editor.
        deltaY = 0;
 
       });
+
+// //EDIT
+       
+//        // subscribe to events
+//        var currentScale = 1;
+//        function getRelativeScale(scale) {
+//          return scale * currentScale;
+//        }
+//        manager.on('pinchmove', function(copied) {
+
+//         // do something cool
+//         var scale = getRelativeScale(copied.scale);
+//         // console.log(scale);
+//         var task = copied.target; //the thing doing event to 
+//         var textSize = parseFloat(window.getComputedStyle(taskbox)["font-size"]); //parses font size to find the size
+//         console.log(textSize);
+//         var newSize = textSize*scale;
+          
+//         //  //$.Velocity.hook($stage, 'scale', scale);
+//        });
+//        manager.on('pinchend', function(copied) {
+//           // cache the scale
+//           currentScale = getRelativeScale(e.scale);
+//         });
+
+// //EDIT
+//
+        function createHammerManager(copied) 
+        {
+            // create a manager for that element
+            var manager = new Hammer.Manager(copied);
+             // add the recognizer 
+            manager.add(new Hammer.Pinch());
+            manager.add(new Hammer.Pan());
+            manager.add(new Hammer.Press());
+
+       // subscribe to events
+       var currentScale = 1;
+       
+       function getRelativeScale(scale) {
+         return scale * currentScale;
+       }
+       manager.on('pinchmove', function(e) {
+        pinchAction(e);
+          
+        //  //$.Velocity.hook($stage, 'scale', scale);
+       });
+
+       manager.on('pinchend', function(e) {
+          // cache the scale
+          currentScale = getRelativeScale(e.scale);
+        });
+
+       manager.on('press', function(e) {
+        console.log(e)
+       });
+
+
+       var deltaX = 0;
+       //var deltaY = 0;
+
+       var panCanvas, panTargetBox; 
+
+       //** when starting to pan
+       manager.on('panstart',function(e){
+        //** add 'dragging-task' to the triggered element's class list
+          e.target.classList.add('dragging-task');
+          
+          var canvas = document.createElement("canvas");
+          panCanvas = canvas.getContext('2d');
+          var targetBox = e.target.getBoundingClientRect();
+          panTargetBox = targetBox;
+          canvas.classList.add('task-canvas');
+          canvas.style.width = targetBox.width + "px";
+          canvas.style.height = targetBox.height + "px";
+          canvas.style.left = targetBox.left + "px";
+          canvas.style.top = targetBox.top + "px";
+
+
+          //canvas.width = e.target.style.width; 
+          //console.log(e.target.style.width);
+          //canvas.height = e.target.style.height; 
+          e.target.parentNode.appendChild(canvas); //gets parent of the element  
+
+
+       })
+
+       //when panning (moving) element
+       manager.on('panmove', function(e) {
+        
+        var dX = deltaX + (e.deltaX);
+        var dY = deltaY + (e.deltaY);
+
+        //$.Velocity.hook($taskbox, 'translateX', dX + 'px');
+        
+        //** selects element immediately below the cursor by raising textbox 30 px above it
+        //$.Velocity.hook($taskbox, 'translateY', dY - 30 + 'px');
+        //console.log(e);
+        drawDot(panCanvas, e.center.x - panTargetBox.left, e.center.y - panTargetBox.top);
+
+        if(dX > panTargetBox.width) {
+          panCanvas.canvas.remove();
+          e.target.remove();
+        }
+       });
+
+       //when panning ends
+       manager.on('panend', function(e) {
+       deltaX = deltaX + e.deltaX;
+       panCanvas.canvas.remove();
+       //deltaY = deltaY + e.deltaY;
+      });
+
+      // Draws a dot at a specific position on the supplied canvas name
+    // Parameters are: A canvas context, the x position, the y position
+      function drawDot(ctx,x,y) {
+        // Let's use black by setting RGB values to 0, and 255 alpha (completely opaque)
+        r=255; g=0; b=0; a=255;
+
+        // Select a fill style
+        ctx.fillStyle = "rgba("+r+","+g+","+b+","+(a/255)+")";
+        // Draw a filled circle
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, Math.PI*2, true);
+        ctx.closePath();
+        ctx.fill();
+      }
+   }
+//
+//
+
+        var maxSize = 20; 
+//function to call for pinch and zoom for each element  
+        
+        function pinchAction(e)
+        {
+           // do something cool
+        var scale = getRelativeScale(e.scale);
+        // console.log(scale);
+        var task = e.target; //the thing doing event to 
+        var textSize = parseFloat(window.getComputedStyle(taskbox)["font-size"]); //parses font size to find the size
+        //console.log(textSize);
+
+        var newSize = scale*textSize; 
+
+        if (newSize > maxSize)
+        {
+
+        }
+        else
+          {
+          task.style.fontSize = newSize + "px";
+          //console.log(newSize);
+          }
+      
+
+        }
+
+//------
 
         //Allow elements to be dropped
         function allowDrop(task){ 
@@ -228,7 +408,15 @@ and open the template in the editor.
   <li>30<br><br><br><br><br><br><br><br><br><br></li>
 </ul>
     </div>
-        
+      
+
+
+  <div class="popup" onclick="myFunction()">Click me!
+  <span class="popuptext" id="myPopup">Popup text...</span>
+  </div>  
+
+
+
       <!--<canvas id= "theCanvas" width="1000" height="1000"> </canvas> -->
       <!-- <script type="text/javascript" language="javascript">
       <!--<button> Create Task </button>
