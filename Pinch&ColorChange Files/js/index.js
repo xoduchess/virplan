@@ -76,7 +76,7 @@ manager.on('pinchmove', function(e) {
   // do something cool
   var scale = getRelativeScale(e.scale);
   console.log(scale);
-  $.Velocity.hook($stage, 'scale', scale);
+  //$.Velocity.hook($stage, 'scale', scale);
 });
 manager.on('pinchend', function(e) {
   // cache the scale
