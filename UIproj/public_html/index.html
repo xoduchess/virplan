@@ -16,6 +16,40 @@ and open the template in the editor.
     <!--Add Task area-->
     <textarea id="taskbox" draggable ="true" ondragstart="drag(event)" > What's your Task? </textarea>
 
+<!-- 
+  <div class="popup" onclick="myFunction()">
+  <span class="popuptext" id="myPopup">Popup text...</span>
+  </div> -->
+
+
+
+  <div id="popup_main"> <!-- main content frame -->
+     <div id= "popup_select"> <!-- frame (main body) for selection of colors-->
+       <p>
+          What is the category of this task?
+          <br>
+          <br>
+          <button id="button1" >Deadline</button>
+          <br>
+          <br>
+          <button id="button2" >Meeting</button>
+          <br>
+          <br>
+          <button id="button3">Study Time</button>
+       </p>
+     </div>
+     <div id ="close_popup" onclick="closePopUp()">
+       <p>
+          Close
+       <p>
+     </div>
+  </div>
+
+  <!-- <div class="popup" onclick="myFunction()">here
+  <span class="popuptext" id="taskbox">Popup text...</span>
+  </div> -->
+
+
     <!--* added from Pinch&ColorSwitch branch (index.html)-->
     <script src="https://cdn.rawgit.com/hammerjs/touchemulator/master/touch-emulator.js"></script>
     <script> TouchEmulator(); </script>
@@ -29,6 +63,8 @@ and open the template in the editor.
 
        //* create variable that gets an element by id 
        taskbox = document.getElementById("taskbox");
+        var pressTask;
+
        //looks for the element with this id 
        $taskbox = jQuery(taskbox); //* *added from Pinch&ColorSwitch branch (index.js) 
 
@@ -40,10 +76,56 @@ and open the template in the editor.
        var Pan = new Hammer.Pan(); 
        var Pinch = new Hammer.Pinch();
 
+       var Tap = new Hammer.Tap({
+       taps: 1
+       });
+
+       var DoubleTap = new Hammer.Tap({
+          event: 'doubletap',
+          taps: 2
+       });
+
+
+        // use them together
+        DoubleTap.recognizeWith([Tap]);
+        Tap.requireFailure([DoubleTap]);
+
        // add the recognizer 
        originalManager.add(Pan);
        originalManager.add(Pinch);
 
+       originalManager.add(DoubleTap);
+       originalManager.add(Tap);
+     
+
+
+originalManager.on('doubletap', function(e) {
+  //tapTask = e.target;
+  console.log('doubletapped');
+  myFunction(e);
+
+  // var scale = $.Velocity.hook($stage, 'scale');
+  // if (isShrunken) {
+  //   $.Velocity.hook($stage, 'scale', 2 * scale);
+  // } else {
+  //   $.Velocity.hook($stage, 'scale', .5 * scale);
+  // }
+  // isShrunken = !isShrunken;
+ 
+  //*changed code to double tap to change the color*    
+
+
+  //   currentColorIndex++;
+  // if (currentColorIndex >= colors.length) {
+  //   currentColorIndex = 0;
+  // }
+  // stage.style.backgroundColor = makeColor(colors[currentColorIndex]);
+  // stage.style.borderColor = makeColor(colors[currentColorIndex], 0.85);
+
+
+
+
+});
 //EDIT
        
        // subscribe to events
@@ -138,15 +220,61 @@ and open the template in the editor.
 
 // //EDIT
 //
+
+
+
+function createHammerManagerForDays(day) {
+  console.log(day);
+  var dayManager = new Hammer.Manager(day);
+  dayManager.add(new Hammer.Tap());
+
+  dayManager.on('tap', function(e) {
+    console.log(e.target);
+
+    if(e.target.classList.contains('acquired-task')) {
+
+    } else {
+      e.target.appendChild(pressTask.cloneNode());
+
+    }
+  })
+}
+
         function createHammerManager(copied) 
         {
             // create a manager for that element
             var manager = new Hammer.Manager(copied);
+
+        //     var oneTap = new Hammer.Tap({
+        //          taps: 1
+        //     });
+
+            var twoTap = new Hammer.Tap({
+              event: 'doubletap',
+              taps: 2
+             });
+
+
+        //       // use them together
+        // twoTap.recognizeWith([oneTap]);
+        // oneTap.requireFailure([twoTap]);
+
+
              // add the recognizer 
             manager.add(new Hammer.Pinch());
             manager.add(new Hammer.Pan());
             manager.add(new Hammer.Press());
+            // manager.add(oneTap);
+            // manager.add(twoTap);
+            manager.add(twoTap);
 
+        manager.on('doubletap', function(e) {
+          //tapTask = e.target;
+          console.log('doubletapped');
+          myFunction(e);
+
+        });
+      
        // subscribe to events
        var currentScale = 1;
        
@@ -165,8 +293,15 @@ and open the template in the editor.
         });
 
        manager.on('press', function(e) {
-        console.log(e)
+        console.log("press");
+        pressTask = e.target;
        });
+
+
+
+       // manager.on('pressup', function(e) {
+       //  pressTask = e.target;
+       // });
 
 
        var deltaX = 0;
@@ -224,6 +359,7 @@ and open the template in the editor.
        //deltaY = deltaY + e.deltaY;
       });
 
+
       // Draws a dot at a specific position on the supplied canvas name
     // Parameters are: A canvas context, the x position, the y position
       function drawDot(ctx,x,y) {
@@ -238,6 +374,18 @@ and open the template in the editor.
         ctx.closePath();
         ctx.fill();
       }
+
+
+// manager.on('tap', function(e) {
+//   // currentColorIndex++;
+//   // if (currentColorIndex >= colors.length) {
+//   //   currentColorIndex = 0;
+//   // }
+//   // stage.style.backgroundColor = makeColor(colors[currentColorIndex]);
+//   // stage.style.borderColor = makeColor(colors[currentColorIndex], 0.85);
+// });
+
+
    }
 //
 //
@@ -268,6 +416,10 @@ and open the template in the editor.
       
 
         }
+
+
+
+
 
 //------
 
@@ -317,7 +469,107 @@ and open the template in the editor.
             task.dataTransfer.dropEffect = "copy"; 
 
           }
+
+
+var button1, button2, button3;
+button1 = document.getElementById("button1");
+button2 = document.getElementById("button2");
+button3 = document.getElementById("button3");
+
     
+      button1.addEventListener("click", function()
+      {
+          //var popup = document.getElementById('myPopup');
+          //popup.classList.toggle('show');
+          targetElement.style.backgroundColor = "green";
+      });
+
+        button2.addEventListener("click", function()
+      {
+          //var popup = document.getElementById('myPopup');
+          //popup.classList.toggle('show');
+          targetElement.style.backgroundColor = "blue";
+      });
+
+
+    button3.addEventListener("click", function()
+      {
+          //var popup = document.getElementById('myPopup');
+          //popup.classList.toggle('show');
+          targetElement.style.backgroundColor = "yellow";
+      });
+
+var popup = document.getElementById("popup_main");
+//  // When the user clicks on div, open the popup
+function myFunction(e) {
+    targetElement = e.target;
+    // button1.addEventListener("click", function()
+    //   {
+    //       //var popup = document.getElementById('myPopup');
+    //       //popup.classList.toggle('show');
+    //       target.style.backgroundColor = "green";
+    //   });
+
+    // button2.addEventListener("click", function()
+    //   {
+    //       //var popup = document.getElementById('myPopup');
+    //       //popup.classList.toggle('show');
+    //       target.style.backgroundColor = "blue";
+    //   });
+
+
+    // button3.addEventListener("click", function()
+    //   {
+    //       //var popup = document.getElementById('myPopup');
+    //       //popup.classList.toggle('show');
+    //       target.style.backgroundColor = "yellow";
+    //   });
+
+    popup.style.display = "block";
+}
+
+
+
+function closePopUp()
+{
+    popup.style.display = "none";
+
+}
+
+
+
+// function changeColor_B1()
+// {
+//     taskbox.style.backgroundColor = "orange";
+// } 
+
+// function changeColor_B2()
+// {
+//     taskbox.style.backgroundColor = "yellow";
+// } 
+
+// function changeColor_B3()
+// {
+//     taskbox.style.backgroundColor = "green";
+// } 
+
+
+  // else 
+  //   if (document.getElementById("button3"))
+  //   {
+  //     taskbox.style.backgroundColor = "orange";
+  //   }
+
+  //   button1.onClick = taskbox.style.backgroundColor = "red";
+  //   button2.onClick = taskbox.style.backgroundColor = "blue";
+  //   button3.onClick = taskbox.style.backgroundColor = "green";
+
+
+//}
+
+
+</script>
+
 
     </script>
 
@@ -407,13 +659,14 @@ and open the template in the editor.
   <li>29<br><br><br><br><br><br><br><br><br><br></li>
   <li>30<br><br><br><br><br><br><br><br><br><br></li>
 </ul>
+    
+
+
+
     </div>
       
 
-
-  <div class="popup" onclick="myFunction()">Click me!
-  <span class="popuptext" id="myPopup">Popup text...</span>
-  </div>  
+ 
 
 
 
@@ -451,6 +704,21 @@ and open the template in the editor.
       document.write(cal.getHTML());*/
 
     </script>-->
+    <script type="text/javascript">
+      //dayElements = $.find(".Days").find('li');
+      dayElements = document.getElementsByTagName('li');
+      console.log(dayElements);
+
+    for (var i = 0; i < dayElements.length; i++) {
+        createHammerManagerForDays(dayElements[i]);
+
+    }
+     
+    // dayElements.forEach(function(element) {
+    // createHammerManagerForDays(element);
+    // });
+
+    </script>
  
     </body>
 </html>
